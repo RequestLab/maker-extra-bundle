@@ -3,3 +3,6 @@ framework:
   router:
         resource: ~
         strict_requirements: true
+
+maker:
+    root_namespace: 'Rlb\MakerExtraBundle\Tests\App'

@@ -11,6 +11,10 @@
                 <argument type="service" id="maker.extra_generator" />
                 <tag name="maker.extra.command" />
             </service>
+            <service id="maker.maker.make_messenger_command" class="Rlb\MakerExtraBundle\Maker\MakeMessengerCommand">
+                <argument type="service" id="maker.extra_generator" />
+                <tag name="maker.extra.command" />
+            </service>
         </services>
 </container>
 

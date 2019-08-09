@@ -2,19 +2,19 @@
 
 namespace Rlb\MakerExtraBundle;
 
-use Symfony\Component\HttpKernel\Config\FileLocator;
+use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\Config\FileLocator;
 
-class ExtraGenerator
+class ExtraGenerator extends Generator
 {
     /**
      * @var FileLocator
      */
     private $fileLocator;
 
-    public function __construct(
-        FileLocator $fileLocator
-    ) {
+    public function setFileLocator(FileLocator $fileLocator): void
+    {
         $this->fileLocator = $fileLocator;
     }
 

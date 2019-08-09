@@ -4,7 +4,8 @@
     "type": "symfony-bundle",
     "require": {
         "symfony/http-kernel": "4.2.*",
-        "symfony/routing": "^4.3"
+        "symfony/routing": "^4.3",
+        "doctrine/annotations": "^1.7"
     },
     "autoload": {
         "psr-4": {

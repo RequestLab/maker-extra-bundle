@@ -8,7 +8,11 @@
             <defaults public="false" />
 
             <service id="maker.extra_generator" class="Rlb\MakerExtraBundle\ExtraGenerator">
-                <argument type="service" id="file_locator" />
+                <argument type="service" id="maker.file_manager" />
+                <argument /> <!-- root namespace -->
+                <call method="setFileLocator">
+                    <argument type="service" id="file_locator"/>
+                </call>
             </service>
         </services>
 </container>
