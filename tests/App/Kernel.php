@@ -2,10 +2,10 @@
 
 namespace Rlb\MakerExtraBundle\Tests\App;
 
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\Kernel as SfKernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
-class AppKernel extends Kernel
+class Kernel extends SfKernel
 {
     public function registerBundles()
     {

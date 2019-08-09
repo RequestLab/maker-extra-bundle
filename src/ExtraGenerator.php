@@ -2,33 +2,34 @@
 
 namespace Rlb\MakerExtraBundle;
 
+use Symfony\Component\HttpKernel\Config\FileLocator;
+use Symfony\Component\Filesystem\Filesystem;
+
 class ExtraGenerator
 {
-    public $srcPath;
+    /**
+     * @var FileLocator
+     */
+    private $fileLocator;
 
-    public function __construct(string $kernelRootDir)
-    {
-        $this->srcPath = $kernelRootDir.'/src/';
+    public function __construct(
+        FileLocator $fileLocator
+    ) {
+        $this->fileLocator = $fileLocator;
     }
 
-    public function copyRecursivly(string $source, string $target)
+    public function getRootApp(): string
     {
-        $targetPath = $this->srcPath.$target;
-        $skeleton = $this->getSkeletonPath($source);
+        $resourcePath = $this->fileLocator->locate('Kernel.php');
 
-        if (is_dir($targetPath)) {
-            throw new \Exception(sprintf('The folder "%s" already exist in "%s"', $target, $this->srcPath));
-        }
+        return dirname($resourcePath);
+    }
 
-        mkdir($targetPath, 0755);
-
-        foreach ($iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($skeleton, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST) as $item) {
-            if ($item->isDir()) {
-                mkdir($targetPath.DIRECTORY_SEPARATOR.$iterator->getSubPathName());
-            } else {
-                copy($item, $target.DIRECTORY_SEPARATOR.$iterator->getSubPathName());
-            }
-        }
+    public function generateFolder(string $targetPath, string $folderSource)
+    {
+        $skeleton = $this->getSkeletonPath($folderSource);
+        $fileSystem = new Filesystem();
+        $fileSystem->mirror($skeleton, $this->getRootApp().'/'.$targetPath);
     }
 
     private function getSkeletonPath(string $path): string

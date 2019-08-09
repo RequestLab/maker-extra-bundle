@@ -8,7 +8,7 @@
             <defaults public="false" />
 
             <service id="maker.extra_generator" class="Rlb\MakerExtraBundle\ExtraGenerator">
-                <argument>%kernel.project_dir%</argument>
+                <argument type="service" id="file_locator" />
             </service>
         </services>
 </container>

@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Symfony MakerBundle package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Rlb\MakerExtraBundle\Maker;
 
 use Doctrine\Common\Annotations\Annotation;
@@ -58,7 +49,7 @@ final class MakeDomain extends AbstractMaker
     {
         $domainName = $input->getArgument('domain-name');
 
-        $this->extraGenerator->copyRecursivly('domain', $domainName);
+        $this->extraGenerator->generateFolder($domainName, 'domain');
 
         $this->writeSuccessMessage($io);
         $io->text('Next: Open your new domain and add some code!');
@@ -66,16 +57,5 @@ final class MakeDomain extends AbstractMaker
 
     public function configureDependencies(DependencyBuilder $dependencies)
     {
-        /* $dependencies->addClassDependency( */
-        /*     // we only need doctrine/annotations, which contains */
-        /*     // the recipe that loads annotation routes */
-        /*     Annotation::class, */
-        /*     'annotations' */
-        /* ); */
-    }
-
-    private function isTwigInstalled()
-    {
-        return class_exists(TwigBundle::class);
     }
 }
