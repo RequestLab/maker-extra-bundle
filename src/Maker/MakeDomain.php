@@ -49,7 +49,7 @@ final class MakeDomain extends AbstractMaker
     {
         $domainName = $input->getArgument('domain-name');
 
-        $this->extraGenerator->generateFolder($domainName, 'domain');
+        $this->extraGenerator->generateFolder(ucfirst($domainName), 'domain');
 
         $this->writeSuccessMessage($io);
         $io->text('Next: Open your new domain and add some code!');
