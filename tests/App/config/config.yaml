@@ -1,0 +1,5 @@
+framework:
+  secret: KzXJdZQyvxOuEamn7ZrJrvoLPOyv7w
+  router:
+        resource: ~
+        strict_requirements: true
