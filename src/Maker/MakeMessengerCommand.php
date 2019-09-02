@@ -10,12 +10,15 @@ use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
 use Symfony\Bundle\MakerBundle\Str;
+use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\Question;
 
 final class MakeMessengerCommand extends AbstractMaker
 {
@@ -49,15 +52,33 @@ final class MakeMessengerCommand extends AbstractMaker
         $command
             ->setDescription('Creates a new command and commandHandler class')
             ->addArgument('messenger-command-class', InputArgument::OPTIONAL, sprintf('Choose a name for your messenger command class (e.g. <fg=yellow>%sCommand</>)', Str::asClassName(Str::getRandomTerm())))
-            ->addArgument('messenger-command-domain', InputArgument::OPTIONAL, 'In which domain ?')
+            ->addArgument('messenger-command-domain', InputArgument::OPTIONAL, 'In which domain ? (leave empty for root level)')
             ->addOption('no-template', null, InputOption::VALUE_NONE, 'Use this option to disable template generation')
             ->setHelp(file_get_contents(__DIR__.'/../Resources/help/MakeMessengerCommand.txt'))
         ;
+
+        $inputConf->setArgumentAsNonInteractive('messenger-command-domain');
+    }
+
+
+    public function interact(InputInterface $input, ConsoleStyle $io, Command $command)
+    {
+        if (null === $input->getArgument('messenger-command-domain')) {
+            $directories = glob($this->extraGenerator->getRootApp().'/*', GLOB_ONLYDIR);
+            $directories = array_map('basename', $directories);
+
+            $argument = $command->getDefinition()->getArgument('messenger-command-domain');
+
+            $question = new Question($argument->getDescription());
+            $question->setAutocompleterValues($directories);
+
+            $input->setArgument('messenger-command-domain', $io->askQuestion($question));
+        }
     }
 
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator)
     {
-        $this->domainName = ucfirst($input->getArgument('messenger-command-domain'));
+        $this->domainName = $input->getArgument('messenger-command-domain') ? ucfirst($input->getArgument('messenger-command-domain')).'\\' : null;
         $this->commandName = $input->getArgument('messenger-command-class');
 
         $messengerCommandClassNameDetails = $this->generateCommandFileClass($generator);
@@ -72,8 +93,7 @@ final class MakeMessengerCommand extends AbstractMaker
         $this->writeSuccessMessage($io);
 
         $io->text([
-            'Next: Open your new serializer encoder class and start customizing it.',
-            'Find the documentation at <fg=yellow>http://symfony.com/doc/current/serializer/custom_encoders.html</>',
+            'Next: Open your new command / handler classes and start customizing them.',
         ]);
     }
 
@@ -81,7 +101,7 @@ final class MakeMessengerCommand extends AbstractMaker
     {
         $messengerCommandClassNameDetails = $generator->createClassNameDetails(
             $this->commandName,
-            $this->domainName.'\\Application\\Command\\',
+            $this->domainName.'Application\\Command\\',
             'Command'
         );
 
@@ -98,7 +118,7 @@ final class MakeMessengerCommand extends AbstractMaker
     {
         $messengerHandlerClassNameDetails = $generator->createClassNameDetails(
             $this->commandName,
-            $this->domainName.'\\Application\\Command\\Handler\\',
+            $this->domainName.'Application\\Command\\Handler\\',
             'Handler'
         );
 
